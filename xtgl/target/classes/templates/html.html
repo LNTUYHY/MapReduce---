@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="">
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+}
+
+.column {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.product {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 3px;
+}
+
+.product button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+</style>
+
+<script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+
+<script th:inline="javascript">
+
+  function clicked(id) {
+    console.log(id+" clicked ");
+    $.ajax(
+      {
+        url: "/recommend/click",
+        type: "POST",
+        data: {"id": id, "userId": $("#user").val()},
+      }
+    )
+  }
+
+
+  function search(id) {
+    console.log(id+" searched ");
+    $.ajax(
+      {
+        url: "/recommend/search",
+        type: "POST",
+        data: {"id": id, "userId": $("#user").val()},
+      }
+    )
+  }
+
+  function favorite(id) {
+    console.log(id+" favorited ");
+    $.ajax(
+      {
+        url: "/recommend/favorite",
+        type: "POST",
+        data: {"id": id, "userId": $("#user").val()},
+      }
+    )
+  }
+
+  function pay(id) {
+    console.log(id+" payed ");
+    $.ajax(
+      {
+        url: "/recommend/pay",
+        type: "POST",
+        data: {"id": id, "userId": $("#user").val()},
+      }
+    )
+  }
+
+  function changeUser() {
+    console.log("switch to " + $('#user').val());
+    $.ajax(
+      {
+        url: "/recommend/rec",
+        type: "GET",
+        data: {"userId": $('#user').val()},
+        success: function(recommendProductList) {
+          console.log(recommendProductList);
+          var recommend = "<h2>你可能喜欢</h2>";
+          recommendProductList.forEach((product, index) => {
+            recommend += '<div><h3>'+product.name+'</h3><button onclick="clicked('+ product.id +')">点击</button><button onclick="search('+ product.id + ')">搜索</button><button onclick="favorite('+ product.id + ')">收藏</button><button onclick="pay('+ product.id + ')">付款</button></div>';
+          });
+          $('#recommend-list').html(recommend);
+        }
+      }
+    )
+  }
+
+
+</script>
+</head>
+<body>
+
+<h2>辽宁工程技术大学天猫超市</h2>
+<div>
+  <select id="user" th:onclick="changeUser()">
+    <option>未登录</option>
+    <option th:each="user:${userList}"
+            th:value="${user.getId()}"
+            th:text="${user.getName()}"
+    ></option>
+  </select>
+</div>
+<div class="container">
+  <div class="product" name="product-list">  <!-- 商品列表 -->
+      <div th:each="product:${productList}">
+        <h3 th:text="${product.getName()}"></h3>
+        <button th:onclick="clicked([[${product.getId()}]])">点击</button>
+        <button th:onclick="search([[${product.getId()}]])">搜索</button>
+        <button th:onclick="favorite([[${product.getId()}]])">收藏</button>
+        <button th:onclick="pay([[${product.getId()}]])">付款</button>
+      </div>
+
+  </div>
+
+
+  <div class="product" id="recommend-list">  <!-- 商品列表 -->
+    <h2>你可能喜欢</h2>
+    <div th:each="product:${recommendProductList}">
+      <h3 th:text="${product.getName()}"></h3>
+      <button th:onclick="clicked([[${product.getId()}]])">点击</button>
+      <button th:onclick="search([[${product.getId()}]])">搜索</button>
+      <button th:onclick="favorite([[${product.getId()}]])">收藏</button>
+      <button th:onclick="pay([[${product.getId()}]])">付款</button>
+    </div>
+</div>
+
+
+</body>
+</html>

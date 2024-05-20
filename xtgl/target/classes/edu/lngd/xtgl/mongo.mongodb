@@ -1,0 +1,50 @@
+// action
+use('xtgl')
+// db.action.drop()
+db.action.find()
+
+// product
+use('xtgl')
+// db.product.drop()
+for(i=1; i<10; i++) {
+    db.product.insertOne(
+        {
+            _id: i.toString(),
+            name: '商品'+i,
+            price: (20 + Math.floor(Math.random() * 10)).toString(),
+        }
+    )
+}
+db.product.find()
+
+// user
+use('xtgl')
+// db.user.drop()
+for(i=1; i<5; i++) {
+    db.user.insertOne(
+        {
+            _id: i.toString(),
+            name: '用户'+i,
+
+        }
+    )
+}
+db.user.find()
+
+// recommend
+use('xtgl')
+// db.recommend.drop()
+for(i=1; i<10; i++) {
+    var userId = Math.ceil(Math.random() * 4).toString();
+    var productId = Math.ceil(Math.random()*9).toString();
+    var timeStamp = new Date().getTime().toString();
+    db.recommend.insertOne(
+        {
+            _id: userId + "-" + productId + "-" + timeStamp,
+            userId: userId,
+            productId: productId,
+            timeStamp: timeStamp,
+        }
+    )
+}
+db.recommend.find()
